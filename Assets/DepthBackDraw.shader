@@ -1,23 +1,22 @@
 ﻿Shader "Hidden/DepthBackDraw"
 {
-	Properties
-	{
-		_MainTex ("Texture", 2D) = "white" {}
-	}
 	SubShader
 	{
 		// No culling or depth
-		Cull Off ZWrite Off ZTest Always
-		//ZTest Greater
-
-
+		ZTest Always
+		Tags { "RenderType" = "Opaque" "Queue" = "Geometry + 2000" }
+		//	ZWrite On
+			
+       //Blend SrcAlpha OneMinusSrcAlpha 
 		Pass
 		{
+			
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			sampler2D _CameraDepthTexture;
-			
+			float4 _CameraDepthTexture_ST;
+
 			#include "UnityCG.cginc"
 
 			struct appdata
@@ -28,7 +27,7 @@
 
 			struct v2f
 			{
-				float2 uv : TEXCOORD0;
+				float4 screenPos : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
 
@@ -36,18 +35,17 @@
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
+				o.screenPos = ComputeScreenPos(o.vertex);
 				return o;
 			}
 			
-			sampler2D _MainTex;
-
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex,i.uv);
-				fixed depth = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv));
-				fixed vertexDepth = i.vertex.z / i.vertex.w;
-				return fixed4(col.r,col.g,col.b,depth < vertexDepth);
+				float2 uv = i.screenPos.xy / i.screenPos.w;
+				float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv);
+				//depth = Linear01Depth(depth);
+				float vertexDepth = i.vertex.z / i.vertex.w;
+				return fixed4(depth,0,0,1);
 			}
 			ENDCG
 		}

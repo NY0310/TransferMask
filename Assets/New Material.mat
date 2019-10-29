@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DepthBackDraw
-  m_Shader: {fileID: 4800000, guid: 281d08ff09774461daba02f896cb2ed9, type: 3}
+  m_Name: New Material
+  m_Shader: {fileID: 4800000, guid: 3a637d47cf54b4005ad0b3edb6e9f543, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
